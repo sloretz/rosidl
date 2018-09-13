@@ -105,9 +105,6 @@ def is_valid_field_name(name):
 
 def is_valid_message_name(name):
     try:
-        prefix = 'Sample_'
-        if name.startswith(prefix):
-            name = name[len(prefix):]
         for service_suffix in ['_Request', '_Response']:
             if name.endswith(service_suffix):
                 name = name[:-len(service_suffix)]
