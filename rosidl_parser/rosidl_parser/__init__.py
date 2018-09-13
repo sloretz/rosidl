@@ -681,6 +681,8 @@ class ServiceSpecification:
 def parse_service_file(pkg_name, interface_filename):
     basename = os.path.basename(interface_filename)
     srv_name = os.path.splitext(basename)[0]
+    if not is_valid_message_name(srv_name):
+        raise InvalidResourceName(srv_name)
     with open(interface_filename, 'r') as h:
         return parse_service_string(
             pkg_name, srv_name, h.read())
