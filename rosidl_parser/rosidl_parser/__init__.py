@@ -103,15 +103,16 @@ def is_valid_field_name(name):
     return m is not None and m.group(0) == name
 
 
-def is_valid_message_name(name):
+def is_valid_message_name(name, allow_exceptions=False):
     try:
-        prefix = 'Sample_'
-        if name.startswith(prefix):
-            name = name[len(prefix):]
-        for service_suffix in ['_Request', '_Response']:
-            if name.endswith(service_suffix):
-                name = name[:-len(service_suffix)]
-                break
+        if allow_exceptions:
+            prefix = 'Sample_'
+            if name.startswith(prefix):
+                name = name[len(prefix):]
+            for service_suffix in ['_Request', '_Response']:
+                if name.endswith(service_suffix):
+                    name = name[:-len(service_suffix)]
+                    break
         m = VALID_MESSAGE_NAME_PATTERN.match(name)
     except (AttributeError, TypeError):
         raise InvalidResourceName(name)
@@ -169,7 +170,7 @@ class BaseType:
                 self.type = type_string
             if not is_valid_package_name(self.pkg_name):
                 raise InvalidResourceName(self.pkg_name)
-            if not is_valid_message_name(self.type):
+            if not is_valid_message_name(self.type, allow_exceptions=True):
                 raise InvalidResourceName(self.type)
             self.string_upper_bound = None
 
@@ -388,6 +389,8 @@ class MessageSpecification:
 def parse_message_file(pkg_name, interface_filename):
     basename = os.path.basename(interface_filename)
     msg_name = os.path.splitext(basename)[0]
+    if not is_valid_message_name(msg_name):
+        raise InvalidResourceName(msg_name)
     with open(interface_filename, 'r') as h:
         return parse_message_string(
             pkg_name, msg_name, h.read())
