@@ -49,7 +49,7 @@ else()
   set(${PROJECT_NAME}_LIBRARY_TYPE "STATIC")
 endif()
 
-if(BUILD_TESTING)
+if(FALSE AND BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
